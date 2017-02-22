@@ -3,10 +3,11 @@
 #include <fstream>
 #include <sstream>
 #include <map>
+#include <cstdlib>
 
 using std::cout;
 using std::string;
-using std::fstream;
+using std::ifstream;
 using std::stringstream;
 using std::map;
 
@@ -27,13 +28,13 @@ void validateArguments(const int argc, char* argv[])
     }
 }
 
-fstream openFileOrExit(string& filename)
+ifstream* openFileOrExit(string& filename)
 {
-    fstream input;
+    ifstream* input = new ifstream;
 
-    input.open(filename);
+    input->open(filename.c_str());
 
-    if(!input.is_open())
+    if(!input->is_open())
     {
         cout << "unable to open file..." << '\n';
         exit(1);
@@ -63,13 +64,13 @@ void parseLine(string line)
         }
 
         bool foundMajor = false;
-        for(auto keyToValue : valueToCount)
+        for(map<int, int>::iterator keyToValue = valueToCount.begin(); keyToValue != valueToCount.end(); keyToValue++)
         {
             //cout << keyToValue.first << ": " << keyToValue.second << '\n';
-            if(keyToValue.second > (numberOfValues / 2))
+            if(keyToValue->second > (numberOfValues / 2))
             {
                 //cout << keyToValue.first << " is major" << '\n';
-                cout << keyToValue.first << '\n';
+                cout << keyToValue->first << '\n';
                 foundMajor = true;
                 break;
             }
@@ -85,15 +86,17 @@ int main(int argc, char* argv[])
 
     string filename(argv[1]);
 
-    //cout << "filename: " << filename << "\n";
+    cout << "filename: " << filename << "\n";
 
-    fstream input = openFileOrExit(filename);
+    ifstream* input = openFileOrExit(filename);
 
     string line;
-    while(getline(input, line))
+    while(getline(*input, line))
     {
         parseLine(line);
     }
+
+    delete input;
 
     return 0;
 }

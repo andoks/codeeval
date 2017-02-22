@@ -1,7 +1,13 @@
-CPPFLAGS := -std=c++14 -Wall -Werror
+#CXXFLAGS := -std=c++14 -Wall -Werror
+CXXFLAGS := -std=c++03 -Wall -Werror
 
-e132:
-	$(CPP) $(CPPFLAGS) -o e132 main.o
+e132: main.o
+	$(CXX) $(CXXFLAGS) -o e132 main.o
 
 main.o:
-	$(CPP) $(CPPFLAGS) -c main.cpp
+	$(CXX) $(CXXFLAGS) -c main.cpp
+
+.PHONY: clean
+clean:
+	rm *.o e132
+	
