@@ -187,6 +187,39 @@ class TestHard234(unittest.TestCase):
         output = sut.sort_nodes([a, zbc])
         self.assertEqual(ref, output)
 
+    def test_sort_nodes_4(self):
+        # gptucpgcggtqiwbq
+        b = sut.Node("b", 1)
+        i = sut.Node("i", 1)
+        u = sut.Node("u", 1)
+        w = sut.Node("w", 1)
+        c = sut.Node("c", 2)
+        p = sut.Node("p", 2)
+        q = sut.Node("q", 2)
+        t = sut.Node("t", 2)
+        g = sut.Node("g", 4)
+
+        bi = sut.Node(b, i)
+        uw = sut.Node(u, w)
+        biuw = sut.Node(bi, uw)
+        cp = sut.Node(c, p)
+        qt = sut.Node(q, t)
+        biuwcp = sut.Node(biuw, cp)
+        qtg = sut.Node(qt, g)
+        biuwcpqtg = sut.Node(biuwcp, qtg)
+
+        ref = [b, i, u, w, c, p, q, t, g]
+        output = sut.sort_nodes([c, p, w, u, q, t, i, b, g])
+        self.assertEqual(ref, output)
+
+        ref = [bi, uw, c, p, q, t, g]
+        output = sut.sort_nodes([g, t, q, p, c, uw, bi])
+        self.assertEqual(ref, output)
+
+        ref = [qt, g, biuwcp]
+        output = sut.sort_nodes([biuwcp, qt, g])
+        self.assertEqual(ref, output)
+
     def test_make_ordered_output_string(self):
         self.assertEqual("a: 00; b: 01; c: 1;", sut.make_ordered_output_string({"a": "00", "b": "01", "c": "1"}))
         self.assertEqual(" : 00; b: 01; c: 1;", sut.make_ordered_output_string({" ": "00", "b": "01", "c": "1"}))
