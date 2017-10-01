@@ -1,8 +1,65 @@
 #! /usr/bin/env python3
 
-import unittest
 import hard234 as sut
 
+import unittest
+import functools
+
+class TestNode(unittest.TestCase):
+    def test_init_leaf(self):
+        node = sut.Node("a", 42)
+        self.assertEqual("a", node.value())
+        self.assertEqual(42, node.priority())
+        self.assertIsNone(node._leftChild)
+        self.assertIsNone(node._rightChild)
+
+    def test_init_ancestor(self):
+        a = sut.Node("a", 42)
+        b = sut.Node("b", 1337)
+        node = sut.Node(a, b) 
+        self.assertEqual("ab", node.value())
+        self.assertEqual(42+1337, node.priority())
+        self.assertEqual(a, node._leftChild)
+        self.assertEqual(b, node._rightChild)
+
+    def test_compare_leafs(self):
+        a = sut.Node("a", 1)
+        b = sut.Node("b", 1)
+        self.assertGreater(0, sut.is_left_ok(a, b))
+        self.assertLess(0, sut.is_left_ok(b, a))
+
+    def test_compare_tree(self):
+        a = sut.Node("a", 2)
+        b = sut.Node("b", 1)
+        c = sut.Node("c", 1)
+        bc = sut.Node(b, c)
+        self.assertGreater(0, sut.is_left_ok(bc, a))
+        self.assertLess(0, sut.is_left_ok(a, bc))
+
+    def test_compare_many_chars(self):
+        a = sut.Node("a", 1)
+        b = sut.Node("b", 1)
+        c = sut.Node("c", 2)
+        ab = sut.Node(a, b)
+        self.assertGreater(0, sut.is_left_ok(ab, c))
+        self.assertLess(0, sut.is_left_ok(c, ab))
+
+    def test_get_codes_for_nodes_leaf_nodes_alphabetical_when_equal_weight(self):
+        a = sut.Node("a", 1)
+        b = sut.Node("b", 1)
+        c = sut.Node("c", 2)
+        ab = sut.Node(a, b)
+        abc = sut.Node(ab, c)
+        self.assertEqual({"a": "00", "b": "01", "c": "1"}, abc.get_codes_for_nodes())
+
+    def test_get_codes_for_nodes_leaf_nodes_with_different_weight(self):
+        a = sut.Node("a", 1)
+        b = sut.Node("b", 2)
+        c = sut.Node("c", 3)
+        ab = sut.Node(a, b)
+        abc = sut.Node(ab, c)
+
+        self.assertEqual({"a": "00", "b": "01", "c": "1"}, abc.get_codes_for_nodes())
 
 class TestHard234(unittest.TestCase):
     def test_get_chars(self):
@@ -22,120 +79,70 @@ class TestHard234(unittest.TestCase):
         self.assertEqual({"i": 1, "l": 2, "o": 2, "v": 2, "e": 3, "c": 1, "d": 1, "a": 1}
 , sut.count_chars(["i", "l", "o", "v", "e", "c", "o", "d", "e", "e", "v", "a", "l"]))
 
-    def test_is_left_right_ok_leafs(self):
-        a = ("a", (1, None, None))
-        b = ("b", (1, None, None))
-        self.assertTrue(sut.is_left_right_ok(a, b))
-        self.assertFalse(sut.is_left_right_ok(b, a))
 
-    def test_is_left_right_ok_tree(self):
-        a = ("a", (2, None, None))
-        b = ("b", (1, None, None))
-        c = ("c", (1, None, None))
-        bc = ("bc", (2, b, c))
-        self.assertTrue(sut.is_left_right_ok(bc, a))
-        self.assertFalse(sut.is_left_right_ok(a, bc))
-
-    def test_is_left_right_ok_many_chars(self):
-        a = ("a", (1, None, None))
-        b = ("b", (1, None, None))
-        c = ("c", (2, None, None))
-        ab = ("ab", (2, a, b))
-        self.assertTrue(sut.is_left_right_ok(ab, c))
-        self.assertFalse(sut.is_left_right_ok(c, ab))
-
-    def test_make_tree_from_dict(self):
+    def test_make_trees_from_dict(self):
         d1 = [] 
-        self.assertEqual(d1, sut.make_tree_from_dict({}))
-        d2 = [("a", (1, None, None))]
-        self.assertEqual(d2, sut.make_tree_from_dict({"a": 1}))
-        d3 = [("a", (1, None, None)), ("b", (2, None, None))]
-        self.assertEqual(d3, sut.make_tree_from_dict({"a": 1, "b": 2}))
+        self.assertEqual(d1, sut.make_trees_from_dict({}))
+        d2 = [sut.Node("a", 1)]
+        self.assertEqual(d2, sut.make_trees_from_dict({"a": 1}))
+        d3 = [sut.Node("a", 1), sut.Node("b", 2,)]
+        self.assertEqual(d3, sut.make_trees_from_dict({"a": 1, "b": 2}))
 
-    def test_make_tree_from_dict_ilove(self):
+    def test_make_trees_from_dict_ilove(self):
         loveNodes = []
-        loveNodes.append(("i", (1, None, None)))
-        loveNodes.append(("d", (1, None, None)))
-        loveNodes.append(("c", (1, None, None)))
-        loveNodes.append(("a", (1, None, None)))
-        loveNodes.append(("v", (2, None, None)))
-        loveNodes.append(("o", (2, None, None)))
-        loveNodes.append(("l", (2, None, None)))
-        loveNodes.append(("e", (3, None, None)))
+        loveNodes.append(sut.Node("i", 1))
+        loveNodes.append(sut.Node("d", 1))
+        loveNodes.append(sut.Node("c", 1))
+        loveNodes.append(sut.Node("a", 1))
+        loveNodes.append(sut.Node("v", 2))
+        loveNodes.append(sut.Node("o", 2))
+        loveNodes.append(sut.Node("l", 2))
+        loveNodes.append(sut.Node("e", 3))
         loveDict = {"i": 1, "l": 2, "o": 2, "v": 2, "e": 3, "c": 1, "d": 1, "a": 1}
-        generated = sorted(sut.make_tree_from_dict(loveDict))
-        reference = sorted(loveNodes)
+        generated = sorted(sut.make_trees_from_dict(loveDict), key=functools.cmp_to_key(sut.is_left_ok))
+        reference = sorted(loveNodes, key=functools.cmp_to_key(sut.is_left_ok))
         self.assertEqual(reference, generated)
-
-
-    def test_make_combined_node(self):
-        cn1 = ("ab", (2, ("a", (1, None, None)), ("b", (1, None, None))))
-        self.assertEqual(cn1, sut.make_combined_node(("a", (1, None, None)), ("b", (1, None, None))))
-        left2 = ("a", (2, None, None))
-        rightLeft = ("b", (1, None, None))
-        rightRight = ("c", (1, None, None))
-        right2 = ("bc", (2, rightLeft, rightRight))
-        cn2 = ("abc", (4, left2, right2))
-        self.assertEqual(cn2, sut.make_combined_node(left2, right2))
 
     def test_build_huffman_tree_empty(self):
         self.assertEqual(None, sut.build_huffman_tree({}))
 
     def test_build_huffman_tree_alphabetical_if_equal_weight(self):
-        a = ("a", (1, None, None))
-        b = ("b", (1, None, None))
-        ab = ("ab", (2, a, b))
+        a = sut.Node("a", 1)
+        b = sut.Node("b", 1)
+        ab = sut.Node(a, b)
         self.assertEqual(ab, sut.build_huffman_tree({"a": 1, "b": 1}))
-        self.assertEqual(ab, sut.build_huffman_tree({"b": 1, "a": 1}))
 
     def test_build_huffman_tree(self):
-        a = ("a", (1, None, None))
-        b = ("b", (2, None, None))
-        ab = ("ab", (3, a, b))
-        c = ("c", (4, None, None))
-        abc = ("abc", (7, ab, c))
-        self.assertEqual(a, sut.build_huffman_tree({"a": 1}))
+        a = sut.Node("a", 1)
+        b = sut.Node("b", 2)
+        ab = sut.Node(a, b)
+        c = sut.Node("c", 4)
+        abc = sut.Node(ab, c)
         self.assertEqual(ab, sut.build_huffman_tree({"a": 1, "b": 2}))
         self.assertEqual(abc, sut.build_huffman_tree({"a": 1, "b": 2, "c": 4}))
 
     def test_build_huffman_tree_ilove(self):
         loveDict = {"i": 1, "l": 2, "o": 2, "v": 2, "e": 3, "c": 1, "d": 1, "a": 1}
-        a = ("a", (1, None, None))
-        c = ("c", (1, None, None))
-        d = ("d", (1, None, None))
-        i = ("i", (1, None, None))
-        l = ("l", (2, None, None))
-        o = ("o", (2, None, None))
-        v = ("v", (2, None, None))
-        e = ("e", (3, None, None))
+        a = sut.Node("a", 1)
+        c = sut.Node("c", 1)
+        d = sut.Node("d", 1)
+        i = sut.Node("i", 1)
+        l = sut.Node("l", 2)
+        o = sut.Node("o", 2)
+        v = sut.Node("v", 2)
+        e = sut.Node("e", 3)
 
-        di = ("di", (2, d, i))
-        ac = ("ac", (2, a, c))
-        acdi = ("acdi", (4, ac, di))
-        lo = ("lo", (4, l, o))
-        ve = ("ve", (5, v, 4))
-        acdilo = ("acdilo", (8, acdi, lo))
-        veacdilo = ("veacdilo", (13, ve, acdilo))
+        di = sut.Node(d, i)
+        ac = sut.Node(a, c)
+        acdi = sut.Node(ac, di)
+        lo = sut.Node(l, o)
+        ve = sut.Node(v, e)
+        acdilo = sut.Node(acdi, lo)
+        veacdilo = sut.Node(ve, acdilo)
         loveTree = veacdilo
 
         self.assertEqual(loveTree, sut.build_huffman_tree(loveDict))
 
-    def test_get_codes_for_nodes_leaf_nodes_alphabetical_when_equal_weight(self):
-        a = ("a", (1, None, None))
-        b = ("b", (1, None, None))
-        c = ("c", (2, None, None))
-        ab = ("ab", (2, a, b))
-        abc = ("cab", (4, ab, c))
-        self.assertEqual({"a": "00", "b": "01", "c": "1"}, sut.get_codes_for_nodes(abc))
-
-    def test_get_codes_for_nodes_leaf_nodes_with_different_weight(self):
-        a = ("a", (1, None, None))
-        b = ("b", (2, None, None))
-        c = ("c", (3, None, None))
-        ab = ("ab", (3, a, b))
-        abc = ("abc", (6, ab, c))
-
-        self.assertEqual({"a": "00", "b": "01", "c": "1"}, sut.get_codes_for_nodes(abc))
 
     def test_make_ordered_output_string(self):
         self.assertEqual("a: 00; b: 01; c: 1;", sut.make_ordered_output_string({"a": "00", "b": "01", "c": "1"}))
