@@ -143,6 +143,37 @@ class TestHard234(unittest.TestCase):
 
         self.assertEqual(loveTree, sut.build_huffman_tree(loveDict))
 
+    def test_sort_nodes_1(self):
+        a = sut.Node("a", 1)
+        b = sut.Node("b", 1)
+        c = sut.Node("c", 1)
+
+        ref = [a, b, c]
+        output = sut.sort_nodes([b, a, c])
+        self.assertEqual(ref, output)
+
+    def test_sort_nodes_2(self):
+        b = sut.Node("b", 1)
+        c = sut.Node("c", 2)
+        a = sut.Node("a", 4)
+        z = sut.Node("z", 1)
+
+        ref = [b, z, c, a]
+        output = sut.sort_nodes([b, z, c, a])
+        self.assertEqual(ref, output)
+
+    def test_sort_nodes_3(self):
+        b = sut.Node("b", 1)
+        c = sut.Node("c", 2)
+        a = sut.Node("a", 4)
+        z = sut.Node("z", 1)
+
+        bc = sut.Node(b, c)
+        zbc = sut.Node(z, bc)
+
+        ref = [zbc, a]
+        output = sut.sort_nodes([a, zbc])
+        self.assertEqual(ref, output)
 
     def test_make_ordered_output_string(self):
         self.assertEqual("a: 00; b: 01; c: 1;", sut.make_ordered_output_string({"a": "00", "b": "01", "c": "1"}))

@@ -92,17 +92,20 @@ def count_chars(char_list: List[str]) -> Dict[str, int]:
     return charToCount
 
 def build_huffman_tree(charsToCount: Dict[str, int]):
-    tree = make_trees_from_dict(charsToCount)
-    while len(tree) > 1:
-        tree = sorted(tree, key=functools.cmp_to_key(is_left_ok))
-        left = tree[0]
-        right = tree[1]
-        tree.remove(left)
-        tree.remove(right)
+    trees = make_trees_from_dict(charsToCount)
+    while len(trees) > 1:
+        trees = sort_nodes(trees)
+        left = trees[0]
+        right = trees[1]
+        trees.remove(left)
+        trees.remove(right)
         combined = Node(left, right)
-        tree.append(combined)
+        trees.append(combined)
 
-    return tree[0] if len(tree) == 1 else None
+    return trees[0] if len(trees) == 1 else None
+
+def sort_nodes(nodes: List[Node]) -> List[Node]:
+    return sorted(nodes, key=functools.cmp_to_key(is_left_ok))
 
 def make_trees_from_dict(charsToCount: Dict[str, int]) -> List[Node]:
     tree = [Node(key, charsToCount[key]) for key in charsToCount]
