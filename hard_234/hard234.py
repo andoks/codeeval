@@ -2,7 +2,7 @@
 
 from typing import List, Dict, Tuple
 import functools
-
+import sys
 
 class Node(object):
     def _make_ancestor(self, leftChild: 'Node', rightChild: 'Node') -> 'Node':
@@ -127,4 +127,7 @@ def main():
     with open(sys.argv[1], 'r') as test_cases:
         for line in test_cases:
             print(get_huffman_weights(line))
+
+if __name__ == '__main__':
+    main()
 
