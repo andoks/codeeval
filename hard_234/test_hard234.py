@@ -61,6 +61,18 @@ class TestNode(unittest.TestCase):
 
         self.assertEqual({"a": "00", "b": "01", "c": "1"}, abc.get_codes_for_nodes())
 
+    def test_left_most_leaf(self):
+        a = sut.Node("a", 1)
+        self.assertEqual(a, a.left_most_leaf())
+
+        b = sut.Node("b", 1)
+        ba = sut.Node(b, a)
+        self.assertEqual(b, ba.left_most_leaf())
+
+        c = sut.Node("c", 1)
+        bac = sut.Node(ba, c)
+        self.assertEqual(b, bac.left_most_leaf())
+
 class TestHard234(unittest.TestCase):
     def test_get_chars(self):
         self.assertEqual([], sut.get_chars(""))
