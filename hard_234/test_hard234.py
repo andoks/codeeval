@@ -80,6 +80,8 @@ class TestHard234(unittest.TestCase):
 
     def test_make_ordered_output_string(self):
         self.assertEqual("a: 00; b: 01; c: 1;", sut.make_ordered_output_string({"a": "00", "b": "01", "c": "1"}))
+        self.assertEqual(" : 00; b: 01; c: 1;", sut.make_ordered_output_string({" ": "00", "b": "01", "c": "1"}))
+
 
 if __name__ == '__main__':
     unittest.main()

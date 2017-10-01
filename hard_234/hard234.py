@@ -62,11 +62,11 @@ def get_codes_for_nodes(tree: Node, code_so_far: str = "") -> Dict[str, str]:
 
 def make_ordered_output_string(charsToCode: Dict[str, str]) -> str:
     in_order = [n for n in sorted(charsToCode.items(), key=lambda entry: entry[0])]
-    output = ""
+    entries_as_strings = []
     for entry in in_order:
-        output += entry[0] + ": " + entry[1] + "; "
+        entries_as_strings.append(entry[0] + ": " + entry[1] + ";")
 
-    return output.strip()
+    return " ".join(entries_as_strings)
 
 def main():
     with open(sys.argv[1], 'r') as test_cases:
