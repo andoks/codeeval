@@ -18,12 +18,30 @@ class TestHard234(unittest.TestCase):
         self.assertEqual({"a": 2}, sut.count_chars(["a", "a"]))
         self.assertEqual({"a": 2, "b": 2}, sut.count_chars(["a", "b", "a", "b"]))
         self.assertEqual({"a": 2, "b": 2, " ": 3}, sut.count_chars(["a"," ", "b", " ", "a", " ", "b"]))
+        self.assertEqual({"i": 1, "l": 2, "o": 2, "v": 2, "e": 3, "c": 1, "d": 1, "a": 1}
+, sut.count_chars(["i", "l", "o", "v", "e", "c", "o", "d", "e", "e", "v", "a", "l"]))
 
-    def test_is_left_right_ok(self):
+    def test_is_left_right_ok_leafs(self):
         a = ("a", (1, None, None))
         b = ("b", (1, None, None))
         self.assertTrue(sut.is_left_right_ok(a, b))
         self.assertFalse(sut.is_left_right_ok(b, a))
+
+    def test_is_left_right_ok_tree(self):
+        a = ("a", (2, None, None))
+        b = ("b", (1, None, None))
+        c = ("c", (1, None, None))
+        bc = ("bc", (2, b, c))
+        self.assertTrue(sut.is_left_right_ok(bc, a))
+        self.assertFalse(sut.is_left_right_ok(a, bc))
+
+    def test_is_left_right_ok_many_chars(self):
+        a = ("a", (1, None, None))
+        b = ("b", (1, None, None))
+        c = ("c", (2, None, None))
+        ab = ("ab", (2, a, b))
+        self.assertTrue(sut.is_left_right_ok(ab, c))
+        self.assertFalse(sut.is_left_right_ok(c, ab))
 
     def test_make_tree_from_dict(self):
         d1 = [] 

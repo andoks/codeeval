@@ -32,12 +32,21 @@ def build_huffman_tree(charsToCount: Dict[str, int]):
 Node = Tuple[str, Tuple[int, 'Node', 'Node']]
 
 def is_left_right_ok(left: Node, right: Node) -> bool:
-    if left[1][0] < right[1][0]:
-        return True
-    elif left[1][0] == right[1][0] and left[0] < right[0]:
-        return True
+    if left[1][0] != right[1][0]:
+        return left[1][0] < right[1][0]
     else:
-        return False
+        left_leaf = left_most_leaf(left)
+        right_leaf = left_most_leaf(right)
+        if  left_leaf[1][0] != right_leaf[1][0]:
+            return  left_leaf[1][0] < right_leaf[1][0]
+        else:
+            return left_leaf[0] < right_leaf[0]
+
+def left_most_leaf(tree: Node)-> Node:
+    if tree[1][1] is None:
+        return tree
+    else:
+        return left_most_leaf(tree[1][1])
 
 def make_tree_from_dict(charsToCount: Dict[str, int]) -> List[Node]:
     tree = [(key, (charsToCount[key], None, None)) for key in charsToCount]
