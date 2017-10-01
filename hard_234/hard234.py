@@ -69,7 +69,7 @@ def make_ordered_output_string(charsToCode: Dict[str, str]) -> str:
     return output.strip()
 
 def main():
-    with open(sys.argv[0], 'r') as test_cases:
+    with open(sys.argv[1], 'r') as test_cases:
         for line in test_cases:
             characters = get_chars(line)
             charsToCount = count_chars(characters)
