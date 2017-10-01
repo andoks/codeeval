@@ -31,8 +31,10 @@ class Node(object):
         else:
             return False
 
-    def __repr__(self) -> str:
-        return "[{}: {} - l: {} r: {}]".format(self.value(), self.priority(),self._leftChild, self._rightChild)
+    def __repr__(self, num=0) -> str:
+        right_str = self._rightChild.__repr__(num+1) if self._rightChild is not None else None
+        left_str = self._leftChild.__repr__(num+1) if self._leftChild is not None else None
+        return "[{}: {} - \n{}l: {} \n{}r: {}]".format(self.value(), self.priority(), "\t"*num, left_str, "\t"*num, right_str)
 
     def left_most_leaf(self) -> 'Node':
         if self._leftChild is None:
