@@ -40,7 +40,7 @@ class Node(object):
         if self._leftChild is None:
             return self
         else:
-            return self._leftChild
+            return self._leftChild.left_most_leaf()
 
     def priority(self) -> int:
         return self._priority
