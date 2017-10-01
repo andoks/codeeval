@@ -82,6 +82,11 @@ class TestHard234(unittest.TestCase):
         self.assertEqual("a: 00; b: 01; c: 1;", sut.make_ordered_output_string({"a": "00", "b": "01", "c": "1"}))
         self.assertEqual(" : 00; b: 01; c: 1;", sut.make_ordered_output_string({" ": "00", "b": "01", "c": "1"}))
 
+    def test_get_huffman_weights(self):
+        #self.assertEqual("", sut.get_huffman_weights(""))
+        self.assertEqual("a: 0; b: 1;", sut.get_huffman_weights("ab"))
+        self.assertEqual("a: 10; b: 11; c: 0;", sut.get_huffman_weights("abc"))
+        self.assertEqual("a: 1000; c: 1001; d: 1010; e: 01; i: 1011; l: 110; o: 111; v: 00;", sut.get_huffman_weights("ilovecodeeval"))
 
 if __name__ == '__main__':
     unittest.main()

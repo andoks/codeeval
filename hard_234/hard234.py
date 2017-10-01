@@ -68,14 +68,17 @@ def make_ordered_output_string(charsToCode: Dict[str, str]) -> str:
 
     return " ".join(entries_as_strings)
 
+def get_huffman_weights(line: str) -> str:
+    characters = get_chars(line)
+    charsToCount = count_chars(characters)
+    huffmanTree = build_huffman_tree(charsToCount)
+    charsToCode = get_codes_for_nodes(huffmanTree)
+    output = make_ordered_output_string(charsToCode)
+    
+    return output
+
 def main():
     with open(sys.argv[1], 'r') as test_cases:
         for line in test_cases:
-            characters = get_chars(line)
-            charsToCount = count_chars(characters)
-            huffmanTree = build_huffman_tree(charsToCount)
-            charsToCode = get_codes(huffmanTree)
-            output = make_ordered_output_string(charsToCode)
-            
-            print(output)
+            print(get_huffman_weights(line))
 
