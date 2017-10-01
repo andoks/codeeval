@@ -126,7 +126,7 @@ def get_huffman_weights(line: str) -> str:
 def main():
     with open(sys.argv[1], 'r') as test_cases:
         for line in test_cases:
-            print(get_huffman_weights(line))
+            print(get_huffman_weights(line.strip()))
 
 if __name__ == '__main__':
     main()
